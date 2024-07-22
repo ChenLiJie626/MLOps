@@ -24,18 +24,29 @@ def create_dataset_builderVNet(batch_size=2, random_seed=1234):
             ])
         )
 
+        db_val = LiverTumor(
+            base_dir=base_dir,
+            split='val',
+            transform=transforms.Compose([
+                RandomRotFlip(),
+                RandomCrop(),
+                ToTensor(),
+            ])
+        )
+
         def worker_init_fn(worker_id):
             random.seed(random_seed + worker_id)
 
-        dataset_size = len(db_train)
-        indices = list(range(dataset_size))
-        np.random.seed(random_seed)
-        np.random.shuffle(indices)
-        split = int(np.floor(0.8 * dataset_size))
-        train_indices, val_indices = indices[:split], indices[split:]
+        dataset_size_train = len(db_train)
+        dataset_size_val = len(db_val)
+        # indices = list(range(dataset_size))
+        # np.random.seed(random_seed)
+        # np.random.shuffle(indices)
+        # split = int(np.floor(0.8 * dataset_size))
+        # train_indices, val_indices = indices[:split], indices[split:]
 
-        train_sampler = SubsetRandomSampler(train_indices)
-        valid_sampler = SubsetRandomSampler(val_indices)
+        # train_sampler = SubsetRandomSampler(train_indices)
+        # valid_sampler = SubsetRandomSampler(val_indices)
 
         trainloader = DataLoader(
             db_train,
@@ -43,22 +54,20 @@ def create_dataset_builderVNet(batch_size=2, random_seed=1234):
             num_workers=4,
             pin_memory=False,
             worker_init_fn=worker_init_fn,
-            sampler=train_sampler
         )
         validloader = DataLoader(
-            db_train,
+            db_val,
             batch_size=batch_size,
             num_workers=4,
             pin_memory=False,
             worker_init_fn=worker_init_fn,
-            sampler=valid_sampler
         )
 
         if stage == "train":
-            train_step_per_epoch = math.ceil(split / batch_size)
+            train_step_per_epoch = math.ceil(dataset_size_train / batch_size)
             return trainloader, train_step_per_epoch
         elif stage == "eval":
-            eval_step_per_epoch = math.ceil((dataset_size - split) / batch_size)
+            eval_step_per_epoch = math.ceil(dataset_size_val / batch_size)
             return validloader, eval_step_per_epoch
 
     return dataset_builder

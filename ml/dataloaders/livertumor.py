@@ -19,10 +19,12 @@ class LiverTumor(Dataset):
         self._base_dir = base_dir
         self.transform = transform
         self.sample_list = []
-
+        self.split = split
         # 获取文件夹中所有的h5文件名
         if split == 'train':
-            self.image_list = [f for f in os.listdir(self._base_dir) if f.endswith('_norm.h5')]
+            self.image_list = [f for f in os.listdir(os.path.join(self._base_dir, 'train')) if f.endswith('_norm.h5')]
+        elif split == 'val':
+            self.image_list = [f for f in os.listdir(os.path.join(self._base_dir, 'val')) if f.endswith('_norm.h5')]
         elif split == 'test':
             self.image_list = [f for f in os.listdir(os.path.join(self._base_dir, 'test')) if f.endswith('_norm.h5')]
 
@@ -36,7 +38,7 @@ class LiverTumor(Dataset):
     def __getitem__(self, idx):
         image_name = self.image_list[idx]
         # 假设文件夹结构为 base_dir/train 和 base_dir/test
-        h5f = h5py.File(self._base_dir+'/'+image_name, 'r')
+        h5f = h5py.File(self._base_dir+'/'+self.split+'/'+image_name, 'r')
 
         image = h5f['image'][:]
         label = h5f['label'][:]

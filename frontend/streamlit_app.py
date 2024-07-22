@@ -1,6 +1,6 @@
 import streamlit as st
 
-from streamlit_gallery import apps, components, prediction
+from streamlit_gallery import apps, components
 from streamlit_gallery.utils.page import page_group
 
 def main():
@@ -14,7 +14,7 @@ def main():
 
         with st.expander("🧩 COMPONENTS", True):
             page.item("Training⭐", components.elements)
-            page.item("Predict⭐", prediction.prediction)
+            page.item("Predict⭐", components.prediction)
         
 
     page.show()

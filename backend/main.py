@@ -51,18 +51,21 @@ def run_fit(custom_writer, model, data, data_builder_dict):
     finally:
         # 还原标准输出
         sys.stdout = original_stdout
-
+output_file = "output.txt"
 def print_output_periodically(custom_writer, fit_thread):
-    while fit_thread.is_alive():
-        time.sleep(5)  # 每隔5秒打印一次
+    with open(output_file, 'w') as f:
+        while fit_thread.is_alive():
+            time.sleep(5)  # 每隔5秒写入一次
+            output = custom_writer.read_and_clear()
+            if output:
+                f.write(output + '\n')
+                f.flush()
+        # 写入剩余的内容
         output = custom_writer.read_and_clear()
         if output:
-            print(output)
-    # 打印剩余的内容
-    output = custom_writer.read_and_clear()
-    if output:
-        print(output)
+            f.write(output + '\n')
 
+    
 #mlflow.set_tracking_uri('sqlite:///backend.db')
 mlflow.set_tracking_uri("sqlite:///db/backend.db")
 app = FastAPI()
@@ -158,13 +161,13 @@ async def train_api( background_tasks: BackgroundTasks): # data: TrainApiData,
             strategy="fed_avg_w",
             backend="torch",
             random_seed=1234,
-            num_gpus=1
+            num_gpus=2
         )
     #todo 这里设置需要考虑是否需要一个文件存储系统，目前就用本地路径  
     data = {
-        alice: 'ml/LITS17/train',
-        bob: 'ml/LITS17/train',
-        carol: 'ml/LITS17/train'
+        alice: 'ml/LITS17',
+        bob: 'ml/LITS17',
+        carol: 'ml/LITS17'
     }
     data_builder_dict = {
         alice: create_dataset_builderVNet(batch_size=2, random_seed=1234),
