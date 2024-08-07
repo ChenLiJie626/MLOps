@@ -7,7 +7,7 @@ def main():
     page = page_group("p")
 
     with st.sidebar:
-        st.title("🎈 Okld's Gallery")
+        st.title("🎈 阿斯克勒庇俄斯")
 
         with st.expander("✨ APPS", True):
             page.item("Start", apps.gallery, default=True)
@@ -20,5 +20,5 @@ def main():
     page.show()
 
 if __name__ == "__main__":
-    st.set_page_config(page_title="Streamlit Gallery by Okld", page_icon="🎈", layout="wide")
+    st.set_page_config(page_title="阿斯克勒庇俄斯", page_icon="🎈", layout="wide")
     main()

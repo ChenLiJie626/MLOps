@@ -79,7 +79,7 @@ def initialize_secretflow():
         address='local',
         log_to_driver=False,
         debug_mode=True,
-        num_gpus=2
+        num_gpus=1
     )
 
 def create_devices():

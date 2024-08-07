@@ -103,12 +103,19 @@ def log_and_chart():
     with st_stderr(log_placeholder):
         accuracy_data = []
         for epoch in range(1, 5):
-            time.sleep(1)
+            time.sleep(5)
             accuracy = random.uniform(70, 100)
             accuracy_data.append(accuracy)
-            logging.warning(f"Epoch {epoch}: Train Accuracy: {accuracy:.2f}%")
-            with chart_placeholder:
-                st_echarts(get_echarts_options(accuracy_data))
+
+            """logging.warning(f"Epoch {epoch}: Train Accuracy: {accuracy:.2f}%")"""
+            f = open (os.path.join("tempDir", "output.txt"),'r')
+            lines = f.readlines()
+            for line in lines[:4]:
+                logging.warning(line)
+                time.sleep(1)
+
+            """with chart_placeholder:
+                st_echarts(get_echarts_options(accuracy_data))"""
     st.session_state["is_training"] = False
     st.balloons()
     st.success("训练完成！")
